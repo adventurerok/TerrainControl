@@ -55,10 +55,11 @@ public final class LayerFactory
             mainLayer = new LayerFromImage(1L, null, worldConfig, world);
         }
 
+        mainLayer = new LayerZoom(45L, mainLayer);
+        mainLayer = new LayerZoom(35L, mainLayer);
+        mainLayer = new LayerZoomFuzzy(27L, mainLayer);
+
         Layer zoomedLayer = new LayerZoomVoronoi(10L, mainLayer);
-        zoomedLayer = new LayerZoomVoronoi(11L, zoomedLayer);
-        zoomedLayer = new LayerZoomVoronoi(12L, zoomedLayer);
-        zoomedLayer = new LayerZoomVoronoi(13L, zoomedLayer);
 
         zoomedLayer.initWorldGenSeed(world.getSeed());
 

@@ -55,11 +55,11 @@ public final class LayerFactory
             mainLayer = new LayerFromImage(1L, null, worldConfig, world);
         }
 
-        mainLayer = new LayerZoom(45L, mainLayer);
+        mainLayer = new LayerZoomFuzzy(45L, mainLayer);
         mainLayer = new LayerZoomFuzzy(35L, mainLayer);
-        mainLayer = new LayerZoom(75L, mainLayer);
+        mainLayer = new LayerZoomFuzzy(75L, mainLayer);
         mainLayer = new LayerZoomFuzzy(13L, mainLayer);
-        mainLayer = new LayerZoom(18L, mainLayer);
+        mainLayer = new LayerZoomFuzzy(18L, mainLayer);
         mainLayer = new LayerZoomFuzzy(27L, mainLayer);
 
         Layer zoomedLayer = new LayerZoomVoronoi(10L, mainLayer);

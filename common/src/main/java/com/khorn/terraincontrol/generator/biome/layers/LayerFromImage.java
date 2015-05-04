@@ -110,7 +110,7 @@ public class LayerFromImage extends Layer
 
             this.biomeMap = new int[colorMap.length];
 
-            HashMap<Integer, UnknownColorTracker> unknownColors = new HashMap<>();
+            HashMap<Integer, UnknownColorTracker> unknownColors = new HashMap<Integer, UnknownColorTracker>();
 
             for (int nColor = 0; nColor < colorMap.length; nColor++)
             {
@@ -133,7 +133,7 @@ public class LayerFromImage extends Layer
             }
 
             if(!unknownColors.isEmpty()) {
-                ArrayList<UnknownColorTracker> unknownColorResults = new ArrayList<>(unknownColors.values());
+                ArrayList<UnknownColorTracker> unknownColorResults = new ArrayList<UnknownColorTracker>(unknownColors.values());
                 Collections.sort(unknownColorResults);
 
                 for(UnknownColorTracker uct : unknownColorResults){

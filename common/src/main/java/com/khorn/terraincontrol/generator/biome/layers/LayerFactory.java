@@ -60,7 +60,7 @@ public final class LayerFactory
         mainLayer = new LayerZoomFuzzy(75L, mainLayer);
         mainLayer = new LayerZoomFuzzy(13L, mainLayer);
         mainLayer = new LayerZoomFuzzy(18L, mainLayer);
-        mainLayer = new LayerZoomFuzzy(27L, mainLayer);
+        //mainLayer = new LayerZoomFuzzy(27L, mainLayer);
 
         Layer zoomedLayer = new LayerZoomVoronoi(10L, mainLayer);
 

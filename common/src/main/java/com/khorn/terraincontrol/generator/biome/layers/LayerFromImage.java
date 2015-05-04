@@ -140,6 +140,57 @@ public class LayerFromImage extends Layer
                     System.out.println(uct.count + " occurrences of unknown biome color #" + printHexColor(uct.color)
                             + " e.g. at (" + uct.exampleX + "," + uct.exampleY + ")");
                 }
+
+
+                //similar but valid replacement (takes the nearest color that is the most similar and uses that to
+                // replace it
+
+                int color;
+                int oColor;
+                int changes = 1;
+                int diff;
+                while(changes > 0){
+                    changes = 0;
+                    for(int x = 0; x < mapWidth; ++x){
+                        for(int y = 0; y < mapHeight; ++y){
+                            if(biomeMap[y * mapWidth + x] != fillBiome) continue;
+                            if(config.biomeColorMap.containsKey(color = (colorMap[y * mapWidth + x]  & 0x00FFFFFF)))
+                                continue;
+
+
+                            int smallestDiff = 195076;
+                            int similarColor = -1;
+
+                            for(int qx = -1; qx < 2; ++qx){
+                                for(int qy = -1; qy < 2; ++qy){
+                                    if(qx == 0 && qy == 0) continue;
+
+                                    if(!config.biomeColorMap.containsKey(
+                                            oColor = (colorMap[y * mapWidth + x]  & 0x00FFFFFF))) continue;
+
+                                    if((diff = colorDiff(color, oColor)) < smallestDiff){
+                                        smallestDiff = diff;
+                                        similarColor = oColor;
+                                    }
+                                }
+                            }
+
+                            if(similarColor == -1) continue;
+                            ++changes;
+
+                            colorMap[y * mapWidth + x] = similarColor | 0xFF000000;
+
+                        }
+                    }
+                }
+
+
+                BufferedImage buff = new BufferedImage(mapWidth, mapHeight, BufferedImage.TYPE_INT_ARGB);
+                buff.setRGB(0, 0, mapWidth, mapHeight, colorMap, 0, mapWidth);
+
+                final File fixedImage = new File(config.settingsDir, config.imageFile + ".fixed");
+                ImageIO.write(buff, "PNG", fixedImage);
+
             }
 
 
@@ -233,6 +284,16 @@ public class LayerFromImage extends Layer
         while(sb.length() < 6) sb.insert(0, '0');
 
         return sb.toString();
+    }
+
+    private static int colorDiff(int c1, int c2){
+        int rn = ((c1 >> 16) & 0xFF) - ((c2 >> 16) & 0xFF);
+        int diff = rn * rn;
+        rn = ((c1 >> 8) & 0xFF) - ((c2 >> 8) & 0xFF);
+        diff += rn * rn;
+        rn = (c1 & 0xFF) - (c2 & 0xFF);
+        diff += rn * rn;
+        return diff;
     }
 
 }

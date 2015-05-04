@@ -11,12 +11,37 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
 public class LayerFromImage extends Layer
 {
 
+
+    private static class UnknownColorTracker implements Comparable<UnknownColorTracker>{
+        public int count = 0;
+        public int color;
+
+        public int exampleX;
+        public int exampleY;
+
+        public UnknownColorTracker(int color, int exampleX, int exampleY) {
+            this.color = color;
+            this.exampleX = exampleX;
+            this.exampleY = exampleY;
+        }
+
+        @Override
+        public int compareTo(UnknownColorTracker unknownColorTracker) {
+            return Integer.compare(this.count, unknownColorTracker.count);
+        }
+        public void incrementCount(){
+            ++this.count;
+        }
+    }
 
     private int[] biomeMap;
     private int mapHeight;
@@ -85,20 +110,40 @@ public class LayerFromImage extends Layer
 
             this.biomeMap = new int[colorMap.length];
 
+            HashMap<Integer, UnknownColorTracker> unknownColors = new HashMap<>();
+
             for (int nColor = 0; nColor < colorMap.length; nColor++)
             {
+
                 int color = colorMap[nColor] & 0x00FFFFFF;
 
                 if (config.biomeColorMap.containsKey(color))
                     this.biomeMap[nColor] = config.biomeColorMap.get(color);
                 else {
-                    int x = nColor % this.mapWidth;
-                    int y = nColor / this.mapWidth;
-                    System.out.println("FromImage: Unknown color #" + printHexColor(color) + " at (" + x + "," + y +
-                            ")");
+                    UnknownColorTracker uct = unknownColors.get(color);
+                    if(uct == null){
+                        int x = nColor % this.mapWidth;
+                        int y = nColor / this.mapWidth;
+                        uct = new UnknownColorTracker(color, x, y);
+                        unknownColors.put(color, uct);
+                    }
+                    uct.incrementCount();
                     this.biomeMap[nColor] = fillBiome;
                 }
             }
+
+            if(!unknownColors.isEmpty()) {
+                ArrayList<UnknownColorTracker> unknownColorResults = new ArrayList<>(unknownColors.values());
+                Collections.sort(unknownColorResults);
+
+                for(UnknownColorTracker uct : unknownColorResults){
+                    System.out.println(uct.count + " occurrences of unknown biome color #" + printHexColor(uct.color)
+                            + " e.g. at (" + uct.exampleX + "," + uct.exampleY + ")");
+                }
+            }
+
+
+
         } catch (IOException ioexception)
         {
             TerrainControl.log(LogMarker.FATAL, ioexception.getStackTrace().toString());

@@ -158,7 +158,7 @@ public class LayerFromImage extends Layer
                                 continue;
 
 
-                            int smallestDiff = 195076;
+                            int smallestDiff = 1950760;
                             int similarColor = -1;
 
                             for(int qx = -1; qx < 2; ++qx){
@@ -166,7 +166,8 @@ public class LayerFromImage extends Layer
                                     if(qx == 0 && qy == 0) continue;
 
                                     if(!config.biomeColorMap.containsKey(
-                                            oColor = (colorMap[y * mapWidth + x]  & 0x00FFFFFF))) continue;
+                                            oColor = (colorMap[(y + qy) * mapWidth +(x + qx)]  & 0x00FFFFFF)))
+                                        continue;
 
                                     if((diff = colorDiff(color, oColor)) < smallestDiff){
                                         smallestDiff = diff;

@@ -6,14 +6,17 @@ import com.khorn.terraincontrol.configuration.WorldConfig;
 import com.khorn.terraincontrol.generator.biome.ArraysCache;
 import com.khorn.terraincontrol.logging.LogMarker;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 
 public class LayerFromImage extends Layer
 {
+
 
     private int[] biomeMap;
     private int mapHeight;
@@ -88,8 +91,13 @@ public class LayerFromImage extends Layer
 
                 if (config.biomeColorMap.containsKey(color))
                     this.biomeMap[nColor] = config.biomeColorMap.get(color);
-                else
+                else {
+                    int x = nColor % this.mapWidth;
+                    int y = nColor / this.mapWidth;
+                    System.out.println("FromImage: Unknown color #" + printHexColor(color) + " at (" + x + "," + y +
+                            ")");
                     this.biomeMap[nColor] = fillBiome;
+                }
             }
         } catch (IOException ioexception)
         {
@@ -173,6 +181,13 @@ public class LayerFromImage extends Layer
                 break;
         }
         return resultBiomes;
+    }
+
+    private static String printHexColor(int hex){
+        StringBuilder sb = new StringBuilder(Integer.toHexString(hex));
+        while(sb.length() < 6) sb.insert(0, '0');
+
+        return sb.toString();
     }
 
 }

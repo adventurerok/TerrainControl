@@ -35,6 +35,7 @@ public class BukkitWorld implements LocalWorld
     private String name;
     private BiomeGenerator biomeGenerator;
 
+
     private static int nextBiomeId = DefaultBiome.values().length;
 
     private static final int MAX_BIOMES_COUNT = 1024;
